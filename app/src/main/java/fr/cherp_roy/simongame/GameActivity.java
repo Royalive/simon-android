@@ -6,10 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class GameActivity extends AppCompatActivity {
 
     private Button[] buttons;
     private SimonButtonClickListener listener;
+    private ArrayList<Button> sequence;
+
+    private SequencePlayTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,48 +22,73 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         retrieveButtons();
+        sequence = new ArrayList<>();
+        sequence.add(buttons[0]);
+        sequence.add(buttons[1]);
+        sequence.add(buttons[2]);
+        sequence.add(buttons[2]);
+        sequence.add(buttons[3]);
+
         listener = new SimonButtonClickListener();
+        task = new SequencePlayTask(this);
 
         for(Button btn : buttons){
             btn.setOnClickListener(listener);
         }
+
+        playSequence(sequence);
     }
 
-    private void retrieveButtons(){
-        buttons = new Button[]{
-                (Button) findViewById(R.id.simon_btn1),
-                (Button) findViewById(R.id.simon_btn2),
-                (Button) findViewById(R.id.simon_btn3),
-                (Button) findViewById(R.id.simon_btn4)
-        };
+    public Button[] retrieveButtons(){
+
+        if(buttons == null) {
+            buttons = new Button[]{
+                    (Button) findViewById(R.id.simon_btn1),
+                    (Button) findViewById(R.id.simon_btn2),
+                    (Button) findViewById(R.id.simon_btn3),
+                    (Button) findViewById(R.id.simon_btn4)
+            };
+        }
+
+        return buttons;
     }
 
-    private ColorDrawable getColor(Button btn){
+    public ColorDrawable getColor(Button btn){
         return (ColorDrawable) (btn.getBackground());
     }
 
-    private void turnOn(Button btn){
+    public void turnOn(Button btn){
         ColorDrawable color = getColor(btn);
         color.setAlpha(255);
         btn.setBackground(color);
     }
 
-    private void turnOff(Button btn){
+    public void turnOff(Button btn){
         ColorDrawable color = getColor(btn);
         color.setAlpha(90);
         btn.setBackground(color);
     }
 
-    private boolean isOn(Button btn){
+    public boolean isOn(Button btn){
         return getColor(btn).getAlpha() == 255;
     }
 
-    private void toggle(Button btn) {
+    public void toggle(Button btn) {
         if (isOn(btn)) {
             turnOff(btn);
         }else{
             turnOn(btn);
         }
+    }
+
+    private void playSequence(ArrayList<Button> sequence){
+        task.execute(sequence);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        task.cancel(true);
     }
 
     class SimonButtonClickListener implements View.OnClickListener{
