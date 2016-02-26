@@ -6,7 +6,7 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 
-public class SequencePlayTask extends AsyncTask<ArrayList<Button>, SequencePlayTask.ButtonAction, Void> {
+public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, SequencePlayTask.ButtonAction, Void> {
 
     public static boolean TURN_OFF = false;
     public static boolean TURN_ON = true;
@@ -18,15 +18,15 @@ public class SequencePlayTask extends AsyncTask<ArrayList<Button>, SequencePlayT
     }
 
     @Override
-    protected Void doInBackground(ArrayList<Button>... seqs) {
+    protected Void doInBackground(ArrayList<SimonButton>... seqs) {
 
-        ArrayList<Button> sequence = seqs[0];
+        ArrayList<SimonButton> sequence = seqs[0];
 
         try {
 
             Log.d("SEQUENCEPLAY", "Allumage");
 
-            for(Button b : sequence){
+            for(SimonButton b : sequence){
                 Thread.sleep(200);
                 publishProgress(new ButtonAction(b, TURN_ON));
 
@@ -56,10 +56,10 @@ public class SequencePlayTask extends AsyncTask<ArrayList<Button>, SequencePlayT
 
 
     public class ButtonAction{
-        public Button button;
+        public SimonButton button;
         public boolean action;
 
-        public ButtonAction(Button button, boolean action){
+        public ButtonAction(SimonButton button, boolean action){
             this.button = button;
             this.action = action;
         }
