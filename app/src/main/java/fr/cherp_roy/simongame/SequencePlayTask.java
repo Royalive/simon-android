@@ -26,12 +26,11 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
             Log.d("SEQUENCEPLAY", "Allumage");
 
             for(SimonButton b : sequence){
-                Thread.sleep(200);
-                publishProgress(new ButtonAction(b, TURN_ON));
 
+                publishProgress(new ButtonAction(b, TURN_ON));
                 Thread.sleep(700);
                 publishProgress(new ButtonAction(b, TURN_OFF));
-
+                Thread.sleep(200);
                 Log.d("SEQUENCEPLAY", "Allumage");
 
             }
