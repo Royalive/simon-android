@@ -39,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
 
         for(SimonButton sbtn : buttons){
             sbtn.getButton().setOnClickListener(listener);
+            turnOff(sbtn);
         }
 
         playSequence(sequence);
@@ -56,10 +57,6 @@ public class GameActivity extends AppCompatActivity {
         }
 
         return buttons;
-    }
-
-    public ColorDrawable getColor(Button btn){
-        return (ColorDrawable) (btn.getBackground());
     }
 
     public void turnOn(SimonButton btn){
