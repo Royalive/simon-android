@@ -26,13 +26,16 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        Random r = new Random();
+
         retrieveButtons();
         sequence = new ArrayList<>();
-        sequence.add(buttons[0]);
-        sequence.add(buttons[1]);
-        sequence.add(buttons[2]);
-        sequence.add(buttons[2]);
-        sequence.add(buttons[3]);
+        for (int i = 0; i<20;i++)
+        {
+            sequence.add(buttons[r.nextInt(4)]);
+        }
+
+
 
         listener = new SimonButtonClickListener();
         task = new SequencePlayTask(this);
