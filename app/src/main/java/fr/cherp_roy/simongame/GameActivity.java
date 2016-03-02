@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -98,8 +99,8 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            SimonButton sbtn = (SimonButton) v.getTag();
-            toggle(sbtn);
+            final SimonButton sbtn = (SimonButton) v.getTag();
+            new SequencePlayTask(GameActivity.this).execute(new ArrayList<SimonButton>(){{ add(sbtn); }});
         }
     }
 }

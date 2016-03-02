@@ -2,7 +2,6 @@ package fr.cherp_roy.simongame;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Button;
 
 import java.util.ArrayList;
 
