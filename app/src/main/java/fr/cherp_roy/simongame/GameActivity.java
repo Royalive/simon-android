@@ -5,13 +5,18 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
+
+    private static int NB_BOUTONS =4;
+    private static int NB_COULEUR_BASE =4;
 
     private SimonButton[] buttons;
 
@@ -21,29 +26,59 @@ public class GameActivity extends AppCompatActivity {
     private ToneGenerator toneGenerator;
     private SequencePlayTask task;
 
+    private int level;
+    private int cpt;
+    private int nbCouleur;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        Random r = new Random();
+        nbCouleur=NB_BOUTONS;
+        cpt=0;
+        level=1;
 
         retrieveButtons();
-        sequence = new ArrayList<>();
-        for (int i = 0; i<20;i++)
-        {
-            sequence.add(buttons[r.nextInt(4)]);
-        }
-
-
-
         listener = new SimonButtonClickListener();
-        task = new SequencePlayTask(this);
         toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
         for(SimonButton sbtn : buttons){
             sbtn.getButton().setOnClickListener(listener);
             turnOff(sbtn);
+        }
+        compoSequence(nbCouleur);
+
+    }
+
+    public void reGame()
+    {
+        cpt=-1;
+        level=1;
+        nbCouleur=NB_COULEUR_BASE;
+
+        compoSequence(NB_COULEUR_BASE);
+
+    }
+
+    public void nextLevel()
+    {
+        cpt=-1;
+        level++;
+        nbCouleur++;
+
+        compoSequence(nbCouleur);
+    }
+
+    public void compoSequence(int nbC)
+    {
+        sequence = new ArrayList<>();
+        Random r = new Random();
+        task = new SequencePlayTask(this);
+
+        for (int i = 0; i<nbC;i++)
+        {
+            sequence.add(buttons[r.nextInt(NB_BOUTONS)]);
         }
 
         playSequence(sequence);
@@ -104,6 +139,23 @@ public class GameActivity extends AppCompatActivity {
         public void onClick(View v) {
             final SimonButton sbtn = (SimonButton) v.getTag();
             new SequencePlayTask(GameActivity.this).execute(new ArrayList<SimonButton>(){{ add(sbtn); }});
+
+            if (sequence.get(cpt).getColor() == sbtn.getColor())
+            {
+                Log.i("TEST COLOR :", "Bonne couleur");
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Perdu :(", Toast.LENGTH_SHORT).show();
+                reGame();
+            }
+
+            if (cpt ==sequence.size()-1){
+
+                Toast.makeText(getApplicationContext(), "Gagné :)", Toast.LENGTH_SHORT).show();
+                nextLevel();
+            }
+            cpt++;
         }
     }
 }
