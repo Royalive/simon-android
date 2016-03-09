@@ -76,7 +76,10 @@ public class GameActivity extends AppCompatActivity {
         nbCouleur++;
         state = PLAYING;
 
-        compoSequence(nbCouleur);
+        Random r = new Random();
+        sequence.add(buttons[r.nextInt(NB_BOUTONS)]);
+
+        playSequence(sequence);
     }
 
     public void compoSequence(int nbC)
