@@ -60,7 +60,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void reGame()
     {
-        cpt=-1;
+        cpt=0;
         level=1;
         nbCouleur=NB_COULEUR_BASE;
         state = PLAYING;
@@ -71,7 +71,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void nextLevel()
     {
-        cpt=-1;
+        cpt=0;
         level++;
         nbCouleur++;
         state = PLAYING;
@@ -182,14 +182,17 @@ public class GameActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Perdu :(", Toast.LENGTH_SHORT).show();
                     state = LOST;
+                    return;
                 }
 
                 if (cpt == sequence.size() - 1) {
 
                     Toast.makeText(getApplicationContext(), "Gagné :)", Toast.LENGTH_SHORT).show();
                     state = WON;
+                }else{
+                    cpt++;
                 }
-                cpt++;
+
             }
         }
     }
