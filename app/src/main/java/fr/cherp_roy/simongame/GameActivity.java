@@ -5,11 +5,13 @@ import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,12 +39,17 @@ public class GameActivity extends AppCompatActivity {
     private int state;
     private int cpt;
     private int nbCouleur;
+    private TextView decompte;
+
+    private long milli;
+    private long sec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        decompte = (TextView) findViewById(R.id.decompte);
         nbCouleur=NB_BOUTONS;
         cpt=0;
         level=1;
@@ -56,7 +63,8 @@ public class GameActivity extends AppCompatActivity {
             sbtn.getButton().setOnClickListener(listener);
             turnOff(sbtn);
         }
-        compoSequence(nbCouleur);
+
+        decoupteSeq();
 
     }
 
@@ -69,7 +77,7 @@ public class GameActivity extends AppCompatActivity {
                 .setMessage("Vous avez atteint le niveau " + level)
                 .setPositiveButton("Rejouer", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        compoSequence(NB_COULEUR_BASE);
+                        decoupteSeq();
                     }
                 });
 
@@ -81,8 +89,22 @@ public class GameActivity extends AppCompatActivity {
         nbCouleur=NB_COULEUR_BASE;
         state = PLAYING;
 
+    }
+    public void decoupteSeq()
+    {
+        new CountDownTimer(3000, 1000) {
 
+            public void onTick(long millisUntilFinished) {
+                Log.i("SEC : ", "seconds remaining: " + millisUntilFinished / 1000);
+                decompte.setText("" + millisUntilFinished / 1000);
+            }
 
+            public void onFinish() {
+
+                decompte.setText("");
+                compoSequence(nbCouleur);
+            }
+        }.start();
     }
 
     public void nextLevel()
@@ -182,13 +204,14 @@ public class GameActivity extends AppCompatActivity {
         task.cancel(true);
     }
 
+
     class SimonButtonClickListener implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
             final SimonButton sbtn = (SimonButton) v.getTag();
 
-            if(!isBusy()) {
+            if (!isBusy()) {
                 playSequence(new ArrayList<SimonButton>() {{
                     add(sbtn);
                 }});
