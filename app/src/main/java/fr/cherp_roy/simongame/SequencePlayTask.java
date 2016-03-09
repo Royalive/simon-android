@@ -52,6 +52,10 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
         }
     }
 
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        activity.onSequenceEnd();
+    }
 
     public class ButtonAction{
         public SimonButton button;

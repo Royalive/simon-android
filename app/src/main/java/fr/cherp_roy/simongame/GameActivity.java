@@ -15,8 +15,13 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static int NB_BOUTONS =4;
-    private static int NB_COULEUR_BASE =4;
+    private static int NB_BOUTONS = 4;
+    private static int NB_COULEUR_BASE = 4;
+
+    private static final int PLAYING = 0;
+    private static final int WON = 1;
+    private static final int LOST = 2;
+
 
     private SimonButton[] buttons;
 
@@ -27,6 +32,7 @@ public class GameActivity extends AppCompatActivity {
     private SequencePlayTask task;
 
     private int level;
+    private int state;
     private int cpt;
     private int nbCouleur;
 
@@ -38,6 +44,7 @@ public class GameActivity extends AppCompatActivity {
         nbCouleur=NB_BOUTONS;
         cpt=0;
         level=1;
+        state = PLAYING;
 
         retrieveButtons();
         listener = new SimonButtonClickListener();
@@ -56,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
         cpt=-1;
         level=1;
         nbCouleur=NB_COULEUR_BASE;
+        state = PLAYING;
 
         compoSequence(NB_COULEUR_BASE);
 
@@ -66,6 +74,7 @@ public class GameActivity extends AppCompatActivity {
         cpt=-1;
         level++;
         nbCouleur++;
+        state = PLAYING;
 
         compoSequence(nbCouleur);
     }
@@ -74,7 +83,6 @@ public class GameActivity extends AppCompatActivity {
     {
         sequence = new ArrayList<>();
         Random r = new Random();
-        task = new SequencePlayTask(this);
 
         for (int i = 0; i<nbC;i++)
         {
@@ -123,8 +131,30 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void playSequence(ArrayList<SimonButton> sequence){
-        task.execute(sequence);
+    private boolean playSequence(ArrayList<SimonButton> sequence){
+
+        Log.d("SIMON", "playSequence : " + isBusy());
+        if(!isBusy()) {
+            task = new SequencePlayTask(GameActivity.this);
+            task.execute(sequence);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public void onSequenceEnd() {
+        task = null;
+        if(state == WON){
+            nextLevel();
+        }else if(state == LOST){
+            reGame();
+        }
+    }
+
+    public boolean isBusy(){
+        return task != null;
     }
 
     @Override
@@ -138,24 +168,26 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final SimonButton sbtn = (SimonButton) v.getTag();
-            new SequencePlayTask(GameActivity.this).execute(new ArrayList<SimonButton>(){{ add(sbtn); }});
 
-            if (sequence.get(cpt).getColor() == sbtn.getColor())
-            {
-                Log.i("TEST COLOR :", "Bonne couleur");
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "Perdu :(", Toast.LENGTH_SHORT).show();
-                reGame();
-            }
+            if(!isBusy()) {
+                playSequence(new ArrayList<SimonButton>() {{
+                    add(sbtn);
+                }});
 
-            if (cpt ==sequence.size()-1){
+                if (sequence.get(cpt).getColor() == sbtn.getColor()) {
+                    Log.i("TEST COLOR :", "Bonne couleur");
+                } else {
+                    Toast.makeText(getApplicationContext(), "Perdu :(", Toast.LENGTH_SHORT).show();
+                    state = LOST;
+                }
 
-                Toast.makeText(getApplicationContext(), "Gagné :)", Toast.LENGTH_SHORT).show();
-                nextLevel();
+                if (cpt == sequence.size() - 1) {
+
+                    Toast.makeText(getApplicationContext(), "Gagné :)", Toast.LENGTH_SHORT).show();
+                    state = WON;
+                }
+                cpt++;
             }
-            cpt++;
         }
     }
 }
