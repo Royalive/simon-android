@@ -1,5 +1,7 @@
 package fr.cherp_roy.simongame;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -60,12 +62,26 @@ public class GameActivity extends AppCompatActivity {
 
     public void reGame()
     {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GameActivity.this);
+        alertDialogBuilder.setTitle("Rejouer ?")
+                .setCancelable(false)
+                .setMessage("Vous avez atteint le niveau " + level)
+                .setPositiveButton("Rejouer", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        compoSequence(NB_COULEUR_BASE);
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
         cpt=0;
         level=1;
         nbCouleur=NB_COULEUR_BASE;
         state = PLAYING;
 
-        compoSequence(NB_COULEUR_BASE);
+
 
     }
 
