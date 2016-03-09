@@ -67,14 +67,16 @@ public class GameActivity extends AppCompatActivity {
         level++;
         nbCouleur++;
 
-        compoSequence(nbCouleur);
+        Random r = new Random();
+        sequence.add(buttons[r.nextInt(NB_BOUTONS)]);
+
+        playSequence(sequence);
     }
 
     public void compoSequence(int nbC)
     {
         sequence = new ArrayList<>();
         Random r = new Random();
-        task = new SequencePlayTask(this);
 
         for (int i = 0; i<nbC;i++)
         {
@@ -124,6 +126,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void playSequence(ArrayList<SimonButton> sequence){
+        task = new SequencePlayTask(this);
         task.execute(sequence);
     }
 
