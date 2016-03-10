@@ -67,4 +67,18 @@
                 android:background="#00e676" />
         </FrameLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="64dp"
+            android:layout_height="63dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="0"
+            style="@style/CodeFont"
+            android:id="@+id/decompte"
+            android:layout_gravity="center" />
+    </FrameLayout>
 </RelativeLayout>

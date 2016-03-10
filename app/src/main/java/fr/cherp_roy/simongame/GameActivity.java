@@ -19,8 +19,8 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static int NB_BOUTONS = 4;
-    private static int NB_COULEUR_BASE = 4;
+    private static final int NB_BOUTONS = 4;
+    private static final int  NB_COULEUR_BASE = 4;
 
     private static final int PLAYING = 0;
     private static final int WON = 1;
@@ -40,9 +40,6 @@ public class GameActivity extends AppCompatActivity {
     private int cpt;
     private int nbCouleur;
     private TextView decompte;
-
-    private long milli;
-    private long sec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
