@@ -2,6 +2,7 @@ package fr.cherp_roy.simongame;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -19,6 +20,7 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
+    public static final String CLE_RES = "CLE_RES";
     private static final int NB_BOUTONS = 4;
     private static final int  NB_COULEUR_BASE = 4;
 
@@ -36,10 +38,14 @@ public class GameActivity extends AppCompatActivity {
     private SequencePlayTask task;
 
     private int level;
+    //private int niveau;
     private int state;
     private int cpt;
     private int nbCouleur;
     private TextView decompte;
+    private Intent intent;
+    private  boolean tick;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +56,11 @@ public class GameActivity extends AppCompatActivity {
         nbCouleur=NB_BOUTONS;
         cpt=0;
         level=1;
+        tick=false;
         state = PLAYING;
+
+        intent = getIntent();
+
 
         retrieveButtons();
         listener = new SimonButtonClickListener();
@@ -76,6 +86,12 @@ public class GameActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         decoupteSeq();
                     }
+                })
+                .setNegativeButton("Quittez", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        onDestroy();
+                        finish();
+                    }
                 });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -89,15 +105,18 @@ public class GameActivity extends AppCompatActivity {
     }
     public void decoupteSeq()
     {
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(5000, 1000) {
 
             public void onTick(long millisUntilFinished) {
+
+                tick=true;
                 Log.i("SEC : ", "seconds remaining: " + millisUntilFinished / 1000);
                 decompte.setText("" + millisUntilFinished / 1000);
             }
 
             public void onFinish() {
 
+                tick=false;
                 decompte.setText("");
                 compoSequence(nbCouleur);
             }
@@ -172,7 +191,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean playSequence(ArrayList<SimonButton> sequence){
 
         Log.d("SIMON", "playSequence : " + isBusy());
-        if(!isBusy()) {
+        if(!isBusy() && !tick) {
             task = new SequencePlayTask(GameActivity.this);
             task.execute(sequence);
             return true;
@@ -201,6 +220,15 @@ public class GameActivity extends AppCompatActivity {
         task.cancel(true);
     }
 
+    @Override
+    public void finish()
+    {
+        Intent data =new Intent();
+        data.putExtra(CLE_RES, 1);
+        setResult(RESULT_OK, data);
+        super.finish();
+    }
+
 
     class SimonButtonClickListener implements View.OnClickListener{
 
@@ -208,7 +236,7 @@ public class GameActivity extends AppCompatActivity {
         public void onClick(View v) {
             final SimonButton sbtn = (SimonButton) v.getTag();
 
-            if (!isBusy()) {
+            if (!isBusy() && !tick) {
                 playSequence(new ArrayList<SimonButton>() {{
                     add(sbtn);
                 }});
