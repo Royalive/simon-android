@@ -20,6 +20,7 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
+    //Constantes
     public static final String CLE_RES = "CLE_RES";
     private static final int NB_BOUTONS = 4;
     private static final int  NB_COULEUR_BASE = 4;
@@ -28,7 +29,7 @@ public class GameActivity extends AppCompatActivity {
     private static final int WON = 1;
     private static final int LOST = 2;
 
-
+    //Attributs
     private SimonButton[] buttons;
 
     private SimonButtonClickListener listener;
@@ -38,13 +39,11 @@ public class GameActivity extends AppCompatActivity {
     private SequencePlayTask task;
 
     private int level;
-    //private int niveau;
     private int state;
     private int cpt;
     private int nbCouleur;
     private TextView decompte;
-    private Intent intent;
-    private  boolean tick;
+    private boolean tick;
 
 
     @Override
@@ -58,9 +57,6 @@ public class GameActivity extends AppCompatActivity {
         level=1;
         tick=false;
         state = PLAYING;
-
-        intent = getIntent();
-
 
         retrieveButtons();
         listener = new SimonButtonClickListener();
@@ -89,7 +85,7 @@ public class GameActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Quittez", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        onDestroy();
+
                         finish();
                     }
                 });
@@ -217,7 +213,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        task.cancel(true);
+        if (task != null)
+            task.cancel(true);
     }
 
     @Override
