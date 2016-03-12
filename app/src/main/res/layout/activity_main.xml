@@ -13,7 +13,7 @@
         android:background = "@drawable/roundedbutton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:text="@string/jouer"
+        android:text="@string/play"
         android:id="@+id/jouer"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />

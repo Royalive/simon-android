@@ -28,6 +28,7 @@ public class GameActivity extends AppCompatActivity {
     private static final int PLAYING = 0;
     private static final int WON = 1;
     private static final int LOST = 2;
+    private static final int SEQUENCE = 3;
 
     //Attributs
     private SimonButton[] buttons;
@@ -77,18 +78,18 @@ public class GameActivity extends AppCompatActivity {
     public void reGame()
     {
 
+        // On crée la boîte de dialogue de fin de niveau
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GameActivity.this);
-        alertDialogBuilder.setTitle("Rejouer ?")
+        alertDialogBuilder.setTitle(getResources().getString(R.string.replay_dialog_title))
                 .setCancelable(false)
-                .setMessage("Vous avez atteint le niveau " + level)
-                .setPositiveButton("Rejouer", new DialogInterface.OnClickListener() {
+                .setMessage(getResources().getString(R.string.replay_dialog_msg).replace("%lvl", String.valueOf(level)))
+                .setPositiveButton(getResources().getString(R.string.replay_dialog_btn_conitnue), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         decoupteSeq();
                     }
                 })
-                .setNegativeButton("Quitter", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.replay_dialog_btn_quit), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         finish();
                     }
                 });
@@ -139,7 +140,7 @@ public class GameActivity extends AppCompatActivity {
         Random r = new Random();
         sequence.add(buttons[r.nextInt(NB_BOUTONS)]);
 
-        playSequence(sequence);
+        playSequence(sequence, true);
     }
 
     /**
@@ -156,7 +157,7 @@ public class GameActivity extends AppCompatActivity {
             sequence.add(buttons[r.nextInt(NB_BOUTONS)]);
         }
 
-        playSequence(sequence);
+        playSequence(sequence, true);
     }
 
     /**
@@ -211,11 +212,16 @@ public class GameActivity extends AppCompatActivity {
     /**
      * Permet de jouer une séquence
      * @param sequence
+     * @param interruptControl true si le joueur peut continuer à utiliser les boutons pendant la lecture de la séquence
      * @return true si la séquence a bien été lancée. false si une séquence est déjà en cours de lecture
      */
-    private boolean playSequence(ArrayList<SimonButton> sequence){
+    private boolean playSequence(ArrayList<SimonButton> sequence, boolean interruptControl){
 
         if (!isBusy() && !tick) {
+
+            if(interruptControl) {
+                state = SEQUENCE;
+            }
             task = new SequencePlayTask(GameActivity.this);
             task.execute(sequence);
             return true;
@@ -234,6 +240,8 @@ public class GameActivity extends AppCompatActivity {
             nextLevel();
         }else if(state == LOST){
             reGame();
+        }else if(state == SEQUENCE){
+            state = PLAYING;
         }
     }
 
@@ -278,10 +286,22 @@ public class GameActivity extends AppCompatActivity {
         public void onClick(View v) {
             final SimonButton sbtn = (SimonButton) v.getTag();
 
-            if (!isBusy() && !tick) {
+            Log.d("SIMON", "CLIC " + state);
+            if ((!isBusy() || state == PLAYING) && !tick) {
+
+                if(isBusy()){
+
+                    task.cancel(true);
+                    task = null;
+
+                    for(SimonButton b : buttons){
+                        turnOff(b);
+                    }
+                }
+
                 playSequence(new ArrayList<SimonButton>() {{
                     add(sbtn);
-                }});
+                }}, false);
 
                 if (sequence.get(cpt).getColor() == sbtn.getColor()) {
                     Log.i("TEST COLOR :", "Bonne couleur");

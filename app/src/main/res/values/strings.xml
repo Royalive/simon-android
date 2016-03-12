@@ -1,14 +1,12 @@
 <resources>
-    <string name="app_name">SimonGame</string>
-    <string name="jouer">JOUER</string>
+    <string name="app_name">Simon Game</string>
+    <string name="play">Play</string>
 
-    <style name="CodeFont" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#000000</item>
-        <item name="android:typeface">monospace</item>
-        <item name="android:textSize">150px</item>
+    <string name="replay_dialog_title">Play again ?</string>
+    <string name="replay_dialog_msg">You just reached level %lvl</string>
+    <string name="replay_dialog_btn_conitnue">Play again</string>
+    <string name="replay_dialog_btn_quit">Quit</string>
 
 
-    </style>
+
 </resources>
