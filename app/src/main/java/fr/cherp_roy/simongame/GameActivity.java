@@ -71,8 +71,8 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    /*
-        Fonction affichant le score de la partie, et proposant le choix de relancer une partie ou de quitter le jeu
+    /**
+     * Affiche le score de la partie, propose de relancer une partie ou de quitter le jeu
      */
     public void reGame()
     {
@@ -103,8 +103,8 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    /*
-        Fonction lançant le compte à rebours et lançant la séquence de couleur une fois celui-ci finie
+    /**
+     * Lance le compte à rebours de début
      */
     public void decoupteSeq()
     {
@@ -119,15 +119,15 @@ public class GameActivity extends AppCompatActivity {
 
             public void onFinish() {
 
-                tick=false;
+                tick= false;
                 decompte.setText("");
                 compoSequence(nbCouleur);
             }
         }.start();
     }
 
-    /*
-        Fonction permetant l'initialisation du prochain niveau en rajoutant une couleur à la séquence de départ
+    /**
+     * Initialise le niveau suivant en rajoutant une couleur
      */
     public void nextLevel()
     {
@@ -142,9 +142,10 @@ public class GameActivity extends AppCompatActivity {
         playSequence(sequence);
     }
 
-    /*
-        Fonction permetant l'initialisation d'une séquence aléatoire
-    */
+    /**
+     * Crée une séquence aléatoire de couleur
+     * @param nbC Taille de la séquence
+     */
     public void compoSequence(int nbC)
     {
         sequence = new ArrayList<>();
@@ -158,9 +159,10 @@ public class GameActivity extends AppCompatActivity {
         playSequence(sequence);
     }
 
-    /*
-        Fonction permetant l'initialisation des boutons dans un tableau, avec leurs sons
-    */
+    /**
+     * Récupère et initialise les boutons de l'interface
+     * @return Tableau de bouton de l'interface
+     */
     public SimonButton[] retrieveButtons(){
 
         if(buttons == null) {
@@ -175,9 +177,10 @@ public class GameActivity extends AppCompatActivity {
         return buttons;
     }
 
-    /*
-        Fonction permetant d'allumer un bouton et jouer le son d'allumage de celui-ci
-    */
+    /**
+     * Allume un bouton et joue le son associé
+     * @param btn
+     */
     public void turnOn(SimonButton btn){
         ColorDrawable color = btn.getColor();
         color.setAlpha(255);
@@ -185,34 +188,34 @@ public class GameActivity extends AppCompatActivity {
         toneGenerator.startTone(btn.getTone(), 200);
     }
 
-    /*
-        Fonction permetant d'éteindre un bouton
-    */
-    public void turnOff(SimonButton btn){
+    /**
+     * Eteint un bouton
+     * @param btn
+     */
+    public void turnOff(SimonButton btn) {
         ColorDrawable color = btn.getColor();
         color.setAlpha(90);
         btn.getButton().setBackground(color);
     }
 
+    /**
+     * Détermine si un bouton est allumé
+     * @param btn
+     * @return true si le bouton est actuellement allumé
+     */
     public boolean isOn(SimonButton btn){
         return btn.getColor().getAlpha() == 255;
     }
 
-    public void toggle(SimonButton btn) {
-        if (isOn(btn)) {
-            turnOff(btn);
-        }else{
-            turnOn(btn);
-        }
-    }
 
-    /*
-        Fonction permetant de jouer la séquence
-    */
+    /**
+     * Permet de jouer une séquence
+     * @param sequence
+     * @return true si la séquence a bien été lancée. false si une séquence est déjà en cours de lecture
+     */
     private boolean playSequence(ArrayList<SimonButton> sequence){
 
-        Log.d("SIMON", "playSequence : " + isBusy());
-        if(!isBusy() && !tick) {
+        if (!isBusy() && !tick) {
             task = new SequencePlayTask(GameActivity.this);
             task.execute(sequence);
             return true;
@@ -222,11 +225,9 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    /*
-        Fonction permetant de lancer la bonne fontion pour continuer le jeu
-        NextLevel si le joueur à bien reproduit la séquence
-        Sinon reGame, s'il a fait une erreur
-    */
+    /**
+     * Signale la fin d'une séquence
+     */
     public void onSequenceEnd() {
         task = null;
         if(state == WON){
@@ -236,12 +237,17 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Détermine si une séquence est en cours de lecture
+     * @return true si une séquence est en cours de lecture
+     */
     public boolean isBusy(){
         return task != null;
     }
 
-    /*
-        Destructeur de l'objet issue de la classe SequencePlayTask
+    /**
+     * Appelé lors de la destruction de l'activité
+     * Annule la séquence en cours si elle existe
      */
     @Override
     protected void onDestroy() {
@@ -250,8 +256,8 @@ public class GameActivity extends AppCompatActivity {
             task.cancel(true);
     }
 
-    /*
-        Fonction permetant le retour au menu principale
+    /**
+     * Appelé lorsque l'activité se termine et retourne au menu
      */
     @Override
     public void finish()
@@ -263,6 +269,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Listener écoutant le clic sur les boutons du jeu
+     */
     class SimonButtonClickListener implements View.OnClickListener{
 
         @Override

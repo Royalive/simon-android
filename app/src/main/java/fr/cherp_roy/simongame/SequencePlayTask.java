@@ -5,6 +5,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+/**
+ * Tâche asynchrone dont le rôle est de jouer une séquence de bouton.
+ * C'est à dire, allumer puis éteindre successivement une série de boutons dans un ordre donné
+ */
 public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, SequencePlayTask.ButtonAction, Void> {
 
     public static boolean TURN_OFF = false;
@@ -16,22 +20,23 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
         this.activity = activity;
     }
 
+    /**
+     * Joue la séquence passée en paramètre
+     * @param seqs
+     * @return
+     */
     @Override
     protected Void doInBackground(ArrayList<SimonButton>... seqs) {
 
         ArrayList<SimonButton> sequence = seqs[0];
 
         try {
-
-            Log.d("SEQUENCEPLAY", "Allumage");
-
             for(SimonButton b : sequence){
 
                 publishProgress(new ButtonAction(b, TURN_ON));
                 Thread.sleep(500);
                 publishProgress(new ButtonAction(b, TURN_OFF));
                 Thread.sleep(100);
-                Log.d("SEQUENCEPLAY", "Allumage");
 
             }
         } catch (InterruptedException e) {
@@ -41,6 +46,10 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
         return null;
     }
 
+    /**
+     * Execute dans le Thread principale, l'action d'alluamge ou d'extinction passée en paramètre
+     * @param values
+     */
     @Override
     protected void onProgressUpdate(ButtonAction... values) {
         ButtonAction ba = values[0];
@@ -57,6 +66,17 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
         activity.onSequenceEnd();
     }
 
+
+    @Override
+    protected void onCancelled() {
+        Log.d("SEQUENCEPLAY", "Annulation");
+        super.onCancelled();
+    }
+
+    /**
+     * Représente un ordre d'allumage ou d'extinction d'un bouton.
+     * Cet ordre est émis par la tâche asynchrone et sera traité dans le Thread principal
+     */
     public class ButtonAction{
         public SimonButton button;
         public boolean action;
@@ -65,11 +85,5 @@ public class SequencePlayTask extends AsyncTask<ArrayList<SimonButton>, Sequence
             this.button = button;
             this.action = action;
         }
-    }
-
-    @Override
-    protected void onCancelled() {
-        Log.d("SEQUENCEPLAY", "Annulation");
-        super.onCancelled();
     }
 }
