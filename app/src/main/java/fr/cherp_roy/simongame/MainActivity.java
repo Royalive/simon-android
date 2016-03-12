@@ -9,8 +9,10 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Constantes
     public static final int REQUETE = 1;
 
+    //Attributs
     private Intent intSet;
     private Button btnJouer;
 

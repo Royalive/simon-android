@@ -71,6 +71,9 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    /*
+        Fonction affichant le score de la partie, et proposant le choix de relancer une partie ou de quitter le jeu
+     */
     public void reGame()
     {
 
@@ -83,7 +86,7 @@ public class GameActivity extends AppCompatActivity {
                         decoupteSeq();
                     }
                 })
-                .setNegativeButton("Quittez", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Quitter", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         finish();
@@ -99,6 +102,10 @@ public class GameActivity extends AppCompatActivity {
         state = PLAYING;
 
     }
+
+    /*
+        Fonction lançant le compte à rebours et lançant la séquence de couleur une fois celui-ci finie
+     */
     public void decoupteSeq()
     {
         new CountDownTimer(5000, 1000) {
@@ -119,6 +126,9 @@ public class GameActivity extends AppCompatActivity {
         }.start();
     }
 
+    /*
+        Fonction permetant l'initialisation du prochain niveau en rajoutant une couleur à la séquence de départ
+     */
     public void nextLevel()
     {
         cpt=0;
@@ -132,6 +142,9 @@ public class GameActivity extends AppCompatActivity {
         playSequence(sequence);
     }
 
+    /*
+        Fonction permetant l'initialisation d'une séquence aléatoire
+    */
     public void compoSequence(int nbC)
     {
         sequence = new ArrayList<>();
@@ -145,6 +158,9 @@ public class GameActivity extends AppCompatActivity {
         playSequence(sequence);
     }
 
+    /*
+        Fonction permetant l'initialisation des boutons dans un tableau, avec leurs sons
+    */
     public SimonButton[] retrieveButtons(){
 
         if(buttons == null) {
@@ -159,6 +175,9 @@ public class GameActivity extends AppCompatActivity {
         return buttons;
     }
 
+    /*
+        Fonction permetant d'allumer un bouton et jouer le son d'allumage de celui-ci
+    */
     public void turnOn(SimonButton btn){
         ColorDrawable color = btn.getColor();
         color.setAlpha(255);
@@ -166,6 +185,9 @@ public class GameActivity extends AppCompatActivity {
         toneGenerator.startTone(btn.getTone(), 200);
     }
 
+    /*
+        Fonction permetant d'éteindre un bouton
+    */
     public void turnOff(SimonButton btn){
         ColorDrawable color = btn.getColor();
         color.setAlpha(90);
@@ -184,6 +206,9 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /*
+        Fonction permetant de jouer la séquence
+    */
     private boolean playSequence(ArrayList<SimonButton> sequence){
 
         Log.d("SIMON", "playSequence : " + isBusy());
@@ -197,6 +222,11 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    /*
+        Fonction permetant de lancer la bonne fontion pour continuer le jeu
+        NextLevel si le joueur à bien reproduit la séquence
+        Sinon reGame, s'il a fait une erreur
+    */
     public void onSequenceEnd() {
         task = null;
         if(state == WON){
@@ -210,6 +240,9 @@ public class GameActivity extends AppCompatActivity {
         return task != null;
     }
 
+    /*
+        Destructeur de l'objet issue de la classe SequencePlayTask
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -217,6 +250,9 @@ public class GameActivity extends AppCompatActivity {
             task.cancel(true);
     }
 
+    /*
+        Fonction permetant le retour au menu principale
+     */
     @Override
     public void finish()
     {
